@@ -1,0 +1,3 @@
+[submodule "Grapher/Grapher/dependencies/Tomato"]
+	path = Grapher/Grapher/dependencies/Tomato
+	url = https://github.com/Gabriel-Gutic/Tomato.git
