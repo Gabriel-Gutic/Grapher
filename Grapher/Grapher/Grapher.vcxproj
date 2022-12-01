@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{83AE1469-D2C5-4AB7-A859-BF4ACF296CA7}</ProjectGuid>
+    <ProjectGuid>{CE092D6E-3AE9-AB09-4301-37E0AF5F126B}</ProjectGuid>
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Grapher</RootNamespace>
@@ -89,9 +89,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Editor.h" />
+    <ClInclude Include="src\Graph2D.h" />
+    <ClInclude Include="src\Graph3D.h" />
     <ClInclude Include="src\pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Editor.cpp" />
+    <ClCompile Include="src\Graph2D.cpp" />
+    <ClCompile Include="src\Graph3D.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

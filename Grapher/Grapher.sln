@@ -1,9 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.3.32922.545
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Grapher", "Grapher\Grapher.vcxproj", "{83AE1469-D2C5-4AB7-A859-BF4ACF296CA7}"
+# Visual Studio Version 16
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Grapher", "Grapher\Grapher.vcxproj", "{CE092D6E-3AE9-AB09-4301-37E0AF5F126B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{53E47842-3FC8-3998-A828-34EB942B241A}"
 EndProject
@@ -23,10 +21,10 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{83AE1469-D2C5-4AB7-A859-BF4ACF296CA7}.Debug|x64.ActiveCfg = Debug|x64
-		{83AE1469-D2C5-4AB7-A859-BF4ACF296CA7}.Debug|x64.Build.0 = Debug|x64
-		{83AE1469-D2C5-4AB7-A859-BF4ACF296CA7}.Release|x64.ActiveCfg = Release|x64
-		{83AE1469-D2C5-4AB7-A859-BF4ACF296CA7}.Release|x64.Build.0 = Release|x64
+		{CE092D6E-3AE9-AB09-4301-37E0AF5F126B}.Debug|x64.ActiveCfg = Debug|x64
+		{CE092D6E-3AE9-AB09-4301-37E0AF5F126B}.Debug|x64.Build.0 = Debug|x64
+		{CE092D6E-3AE9-AB09-4301-37E0AF5F126B}.Release|x64.ActiveCfg = Release|x64
+		{CE092D6E-3AE9-AB09-4301-37E0AF5F126B}.Release|x64.Build.0 = Release|x64
 		{154B857C-0182-860D-AA6E-6C109684020F}.Debug|x64.ActiveCfg = Debug|x64
 		{154B857C-0182-860D-AA6E-6C109684020F}.Debug|x64.Build.0 = Debug|x64
 		{154B857C-0182-860D-AA6E-6C109684020F}.Release|x64.ActiveCfg = Release|x64
@@ -56,8 +54,5 @@ Global
 		{BDD6857C-A90D-870D-52FA-6C103E10030F} = {53E47842-3FC8-3998-A828-34EB942B241A}
 		{C0FF640D-2C14-8DBE-F595-301E616989EF} = {53E47842-3FC8-3998-A828-34EB942B241A}
 		{88F1A057-74BE-FB62-9DD7-E90A890331F1} = {53E47842-3FC8-3998-A828-34EB942B241A}
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {1542D3DD-BFF4-4C33-911D-D7E13B4027F3}
 	EndGlobalSection
 EndGlobal
