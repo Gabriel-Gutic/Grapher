@@ -9,6 +9,10 @@ public:
 
 	virtual void OnUpdate(float dt) override;
 	virtual void OnGUI() override;
-private:
 
+	static Tomato::Font& GetFont();
+private:
+	int m_GraphType = 0;
+
+	static std::unique_ptr<Tomato::Font> s_Font;
 };

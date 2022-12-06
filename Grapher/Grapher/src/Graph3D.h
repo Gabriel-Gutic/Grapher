@@ -11,10 +11,16 @@ public:
 	virtual void OnEvent(const Tomato::Event& e) override;
 	virtual void OnGUI() override;
 private:
-	void DrawLines();
+	void DrawGraph(std::function<float(float, float)> f, const float alpha = 1.0f);
+	void DrawLines() const;
+	void CameraRotation() const;
 private:
-	float m_CameraSpeed = 0.1f;
-	float m_CameraFOV = 45.0f;
+	float m_CameraFOV;
+	float m_CameraRadius;
+	float m_CameraTheta;
+	float m_CameraThetaSpeed;
+	float m_CameraFi;
+	float m_CameraFiSpeed;
 
 	std::shared_ptr<Tomato::FrameBuffer> m_FrameBuffer;
 };
