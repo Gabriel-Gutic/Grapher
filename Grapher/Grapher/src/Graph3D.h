@@ -11,7 +11,7 @@ public:
 	virtual void OnEvent(const Tomato::Event& e) override;
 	virtual void OnGUI() override;
 private:
-	void DrawGraph(std::function<float(float, float)> f, const float alpha = 1.0f);
+	void DrawGraph(const std::function<float(float, float)>& f, const Tomato::Float3& color = Tomato::Float3(1.0f, 1.0f, 1.0f), const float alpha = 1.0f) const;
 	void DrawLines() const;
 	void CameraRotation() const;
 private:

@@ -13,6 +13,8 @@ Editor::Editor()
 
 	App::GetWindow()->SetTitle("Grapher");
 
+	Renderer3D::SetBackgroundColor({ 0.1f, 0.105f, 0.11f });
+
 	GUI::ShowDockspace();
 	GUI::HideMainMenu();
 	GUI::HideSecondMenu();
