@@ -105,20 +105,19 @@ void Graph3D::DrawLines() const
 	//	return -(x * x + z * z) / 6.0f;
 	//	}, Float3(1.0f, 0.2f, 1.0f));
 
-	DrawParametricGraph([](float t, float s) {
-		return Float3
-		(
-			Math::Sin(t) * Math::Cos(s),
-			Math::Sin(t) * Math::Sin(s),
-			Math::Cos(t)
-		);
-	}, Float3(1.0f));
+	//DrawParametricGraph([](float t, float s) {
+	//	return Float3
+	//	(
+	//		Math::Sin(t) * Math::Cos(s),
+	//		Math::Sin(t) * Math::Sin(s),
+	//		Math::Cos(t)
+	//	);
+	//}, Float3(1.0f));
 
-	//float alpha2 = 0.5f;
-	//
-	//DrawGraph([](float x, float z) {
-	//	return -Math::Sin(x * z);
-	//	}, Float3(1.0f, 0.0f, 0.0f), alpha2);
+	
+	DrawExplicitGraph([](float x, float z) {
+		return -Math::Sin(x * z);
+	}, Float3(0.5f, 0.4f, 0.3f));
 
 	//2D Graph
 	/* Float3 last;
