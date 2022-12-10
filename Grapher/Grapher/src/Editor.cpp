@@ -41,6 +41,11 @@ void Editor::OnGUI()
 
 	ImGui::Begin("Menu");
 
+	ImGui::SetWindowFontScale(1.2f);
+
+	std::string fps = "FPS: " + Math::ToString(App::GetFPS());
+	ImGui::Text(fps.c_str());
+
 	if (ImGui::Combo("Graph Type", &m_GraphType, "2D\0" "3D"))
 	{
 		if (m_GraphType == 0)

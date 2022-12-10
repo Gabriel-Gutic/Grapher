@@ -11,7 +11,8 @@ public:
 	virtual void OnEvent(const Tomato::Event& e) override;
 	virtual void OnGUI() override;
 private:
-	void DrawGraph(const std::function<float(float, float)>& f, const Tomato::Float3& color = Tomato::Float3(1.0f, 1.0f, 1.0f), const float alpha = 1.0f) const;
+	void DrawExplicitGraph(const std::function<float(float, float)>& f, const Tomato::Float3& color = Tomato::Float3(1.0f, 1.0f, 1.0f), const float alpha = 1.0f) const;
+	void DrawParametricGraph(const std::function<Tomato::Float3(float, float)>& f, const Tomato::Float3& color = Tomato::Float3(1.0f, 1.0f, 1.0f), const float alpha = 1.0f) const;
 	void DrawLines() const;
 	void CameraRotation() const;
 private:
@@ -21,6 +22,8 @@ private:
 	float m_CameraThetaSpeed;
 	float m_CameraFi;
 	float m_CameraFiSpeed;
+
+	float m_Smoothness;
 
 	std::shared_ptr<Tomato::FrameBuffer> m_FrameBuffer;
 };

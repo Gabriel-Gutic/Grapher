@@ -41,7 +41,7 @@ void Graph2D::OnGUI()
 
 float Graph2D::f(float x)
 {
-	return (1 - x) / Math::Sqrt(1 + x * x);
+	return Math::Tan(x);
 }
 
 void Graph2D::DrawLines()

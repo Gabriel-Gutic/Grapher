@@ -1,13 +1,16 @@
 #include "pch.h"
 #include "Graph3D.h"
 
+#include "Editor.h"
+
 using namespace Tomato;
 
 
 Graph3D::Graph3D()
 	:m_CameraRadius(3.0f), m_CameraFOV(45.0f),
 	m_CameraTheta(-Math::pi / 12.0f), m_CameraFi(2.0f * Math::pi / 3.0f),
-	m_CameraThetaSpeed(0.5f), m_CameraFiSpeed(0.5f)
+	m_CameraThetaSpeed(0.5f), m_CameraFiSpeed(0.5f),
+	m_Smoothness(0.7f)
 {
 	m_FrameBuffer = FrameBuffer::CreateShared();
 
@@ -47,29 +50,75 @@ void Graph3D::OnUpdate(float dt)
 
 void Graph3D::OnEvent(const Event& e)
 {
-
+	if (e.GetType() == EventType::Wheel)
+	{
+		auto ev = Event::Cast<WheelEvent>(e);
+		if ((ev.GetValue() > 0.0f && m_CameraRadius < 100.0f) ||
+			(ev.GetValue() < 0.0f && m_CameraRadius > 1.0f))
+			m_CameraRadius += ev.GetValue() / 10.0f;
+	}
 }
 
 void Graph3D::OnGUI()
 {
-	GUI::RenderWindow(m_FrameBuffer);
+	GUI::RenderWindow(m_FrameBuffer, true);
+
+	ImGui::Begin("Renderer3D");
+	ImGui::SetWindowFontScale(1.2f);
+
+	float maxPoint = m_CameraRadius / 3.0f;
+	std::string inflimit = Math::ToString(-maxPoint);
+	std::string suplimit = Math::ToString(maxPoint);
+
+	ImGui::Text("Limits:");
+	ImGui::Text(("x: [" + inflimit + ", " + suplimit + "]").c_str());
+	ImGui::Text(("y: [" + inflimit + ", " + suplimit + "]").c_str());
+	ImGui::Text(("z: [" + inflimit + ", " + suplimit + "]").c_str());
+
+	ImGui::SliderFloat("Smoothness", &m_Smoothness, 0.3f, 1.0f);
+
+	ImGui::End();
 }
 
 void Graph3D::DrawLines() const
 {
-	Renderer3D::Get()->DrawLine({ -1.0f,  0.0f,  0.0f }, { 1.0f, 0.0f, 0.0f }, Color::Red);
-	Renderer3D::Get()->DrawLine({ 0.0f, -1.0f,  0.0f }, { 0.0f, 1.0f, 0.0f }, Color::Green);
-	Renderer3D::Get()->DrawLine({ 0.0f,  0.0f, -1.0f }, { 0.0f, 0.0f, 1.0f }, Color::Blue);
+	float maxPoint = m_CameraRadius / 3.0f;
 
-	DrawGraph([](float x, float z) {
-		return Math::Sin(x * z);
-	}, Float3(0.0f, 1.0f, 1.0f));
+	Renderer3D::Get()->DrawLine({ -maxPoint,  0.0f,  0.0f }, { maxPoint, 0.0f, 0.0f }, Color::Red);
+	Editor::GetFont().RenderText("x", { maxPoint, maxPoint / 20.0f, 0.0f },
+		Color::Red, maxPoint
+	);
+	Renderer3D::Get()->DrawLine({ 0.0f, -maxPoint,  0.0f }, { 0.0f, maxPoint, 0.0f }, Color::Green);
+	Editor::GetFont().RenderText("y", { maxPoint / 20.0f, maxPoint, 0.0f },
+		Color::Green, maxPoint
+	);
+	Renderer3D::Get()->DrawLine({ 0.0f,  0.0f, -maxPoint }, { 0.0f, 0.0f, maxPoint }, Color::Blue);
+	Editor::GetFont().RenderText("z", { 0.0f, maxPoint / 20.0f , maxPoint },
+		Color::Blue, maxPoint
+	);
 
-	float alpha2 = 0.5f;
-	
-	DrawGraph([](float x, float z) {
-		return -Math::Sin(x * z);
-		}, Float3(1.0f, 0.0f, 0.0f), alpha2);
+	//DrawExplicitGraph([](float x, float z) {
+	//	return (x * x + z * z) / 6.0f;
+	//}, Float3(1.0f, 0.2f, 1.0f));
+	//
+	//DrawExplicitGraph([](float x, float z) {
+	//	return -(x * x + z * z) / 6.0f;
+	//	}, Float3(1.0f, 0.2f, 1.0f));
+
+	DrawParametricGraph([](float t, float s) {
+		return Float3
+		(
+			Math::Sin(t) * Math::Cos(s),
+			Math::Sin(t) * Math::Sin(s),
+			Math::Cos(t)
+		);
+	}, Float3(1.0f));
+
+	//float alpha2 = 0.5f;
+	//
+	//DrawGraph([](float x, float z) {
+	//	return -Math::Sin(x * z);
+	//	}, Float3(1.0f, 0.0f, 0.0f), alpha2);
 
 	//2D Graph
 	/* Float3 last;
@@ -95,12 +144,12 @@ void Graph3D::CameraRotation() const
 	cameraPos.z = radius * Math::Sin(m_CameraFi);
 }
 
-void Graph3D::DrawGraph(const std::function<float(float, float)>& f, const Float3& color, const float alpha) const
+void Graph3D::DrawExplicitGraph(const std::function<float(float, float)>& f, const Float3& color, const float alpha) const
 {
 	float dx, dz;
-	dx = dz = 0.03f;
+	dx = dz = m_CameraRadius / (100.0f * m_Smoothness);
 
-	float limit = 1.0f;
+	float limit = m_CameraRadius / 3.0f;
 
 	for (float x = -limit; x <= limit - dx; x += dx)
 	{
@@ -115,5 +164,28 @@ void Graph3D::DrawGraph(const std::function<float(float, float)>& f, const Float
 					alpha
 				);
 			}
+	}
+}
+
+void Graph3D::DrawParametricGraph(const std::function<Float3(float, float)>& f, const Tomato::Float3& color, const float alpha) const
+{
+	float dt, ds;
+	dt = ds = m_CameraRadius / (100.0f * m_Smoothness);
+
+	float limit = m_CameraRadius / 3.0f;
+
+	for (float t = -limit; t <= limit - dt; t += dt)
+	{
+		for (float s = -limit; s <= limit - ds; s += ds)
+		{
+			Renderer3D::Get()->DrawQuad(
+				f(t, s),
+				f(t, s + ds),
+				f(t + dt, s + ds),
+				f(t + dt, s),
+				color * Float3(std::max(t, 0.5f), std::max(0.5f, s), std::max(t, s)),
+				alpha
+			);
+		}
 	}
 }
