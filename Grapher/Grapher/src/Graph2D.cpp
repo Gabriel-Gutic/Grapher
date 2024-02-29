@@ -1,191 +1,111 @@
 #include "pch.h"
 #include "Graph2D.h"
 
-#include "Editor.h"
-
 using namespace Tomato;
 
 
-Graph2D::Graph2D()
-	:m_Interval(0.0f, 4 * Math::pi)
+Graph2D::Graph2D(std::string_view name)
+	:m_Name(name), m_Color(Float3(1.0f, 1.0f, 1.0f)), m_Smoothness(0.5f), isVisible(true)
 {
-	m_FrameBuffer = FrameBuffer::CreateShared();
-	Renderer3D::SetFrameBuffer(m_FrameBuffer);
 }
 
-void Graph2D::OnUpdate(float dt)
+const std::string& Graph2D::GetName() const
 {
-	Renderer3D::SetFrameBuffer(m_FrameBuffer);
-
-	auto& camera = App::GetCurrentCamera()->GetComponent<CameraComponent>();
-	const auto& window = App::GetWindow();
-
-	camera.SetOrthographicProjection(-window->GetAspectRatio() * m_CameraOrthoSize, window->GetAspectRatio() * m_CameraOrthoSize, -m_CameraOrthoSize, m_CameraOrthoSize, 0.1f, 100.0f);
-
-	DrawLines();
+	return m_Name;
 }
 
-void Graph2D::OnEvent(const Event& e)
+bool Graph2D::IsVisible() const
 {
-	if (e.GetType() == EventType::Wheel)
-	{
-		auto ev = Event::Cast<WheelEvent>(e);
-		if (m_CameraOrthoSize > 2.0f || ev.GetValue() > 0)
-			m_CameraOrthoSize += ev.GetValue();
-	}
-}
-
-void Graph2D::OnGUI()
-{
-	GUI::RenderWindow(m_FrameBuffer, true);
-
-	ImGui::Begin("Renderer 2D");
-	ImGui::SetWindowFontScale(1.2f);
-
-	ImGui::SliderFloat2("t", m_Interval.ToPtr(), 0.0f, 8 * Math::pi);
-
-	ImGui::End();
-}
-
-void Graph2D::DrawExplicitGraph(const std::function<float(float)>& func, const Tomato::Float3& color)
-{
-	const float size = m_CameraOrthoSize * 0.8f;
-
-	Float3 last;
-	for (float x = -size / 10.0f; x <= size / 10.0f; x += size / 5000.0f)
-	{
-		const float f_x = func(x);
-
-		if (!Valid(x))
-			continue;
-
-		Float3 newPoint = { x * 10.0f, f_x * 10.0f, 0.0f };
-		if ((x != -size / 10.0f) && (Math::Abs(f_x) <= size / 10.0f)
-			&& Math::Distance(newPoint, last) < size)
-		{
-			Renderer3D::Get()->DrawLine(last, newPoint, color);
-		}
-		last = newPoint;
-	}
-}
-
-void Graph2D::DrawParametricGraph(const std::function<Tomato::Float2(float)>& func, const Float2& interval, const Tomato::Float3& color)
-{
-	const float size = m_CameraOrthoSize * 0.8f;
-
-	const float dt = size / 5000.0f;
-
-	for (float t = interval.x; t <= interval.y - dt; t += dt)
-	{
-		const auto [x1, y1] = func(t).data;
-		const auto [x2, y2] = func(t + dt).data;
-
-		if (!Valid(x1) || !Valid(x2) || !Valid(y1) || !Valid(y2))
-			continue;
-
-		Float3 A = { x1 * 10.0f, y1 * 10.0f, 0.0f };
-		Float3 B = { x2 * 10.0f, y2 * 10.0f, 0.0f };
-		if ((Math::Abs(x1) <= size / 10.0f) && 
-			(Math::Abs(x2) <= size / 10.0f) &&
-			(Math::Abs(y1) <= size / 10.0f) &&
-			(Math::Abs(y2) <= size / 10.0f) && 
-			Math::Distance(A, B) < size)
-		{
-			Renderer3D::Get()->DrawLine(A, B, color);
-		}
-	}
-}
-
-void Graph2D::DrawLines()
-{
-	const float size = m_CameraOrthoSize * 0.8f;
-
-	Renderer3D::Get()->DrawLine({ -size * 1.1f,  0.0f,  0.0f },
-		{ size * 1.1f, 0.0f, 0.0f }, Color::Red);
-	Editor::GetFont().RenderText("x", { size * 1.1f, size / 20.0f, 0.0f },
-		Color::Red, size
-		);
-	Renderer3D::Get()->DrawTriangle({ size * 1.1f, 0.0f, 0.0f },
-		Color::Red, size / 20.0f, 1.0f,
-		Quaternion::Rotation(0.0f, 0.0f, -90.0f).ToMat4()
-	);
-
-	float d = std::max(static_cast<int>(size / 60.0f) * 10.0f, 10.0f);
-	float fontSize = size * 0.8f;
-
-	for (float x = d; x <= size; x += d)
-	{
-		// Positive
-		Renderer3D::Get()->DrawLine({ x, -size / 100.0f, 0.0f },
-			{ x, size / 100.0f, 0.0f },
-			Color::Red);
-		Editor::GetFont().RenderText(Math::ToString(x / 10.0f), {x, size / 25.0f, 0.0f},
-			Color::Red, fontSize
-		);
-
-		// Negative
-		Renderer3D::Get()->DrawLine({ -x, -size / 100.0f, 0.0f },
-			{ -x, size / 100.0f, 0.0f },
-			Color::Red);
-		Editor::GetFont().RenderText(Math::ToString(-x / 10.0f), { -x, size / 25.0f, 0.0f },
-			Color::Red, fontSize
-		);
-	}
-
-	Renderer3D::Get()->DrawLine({ 0.0f, -size * 1.1f,  0.0f },
-		{ 0.0f, size * 1.1f, 0.0f }, Color::Green);
-	Editor::GetFont().RenderText("y", { size / 20.0f, size * 1.1f, 0.0f },
-		Color::Green, size
-	);
-	Renderer3D::Get()->DrawTriangle({ 0.0f, size * 1.1f, 0.0f },
-		Color::Green, size / 20.0f, 1.0f
-	);
-
-	for (float y = d; y <= size; y += d)
-	{
-		float textWidth = 0.0f;
-		// Positive
-		Renderer3D::Get()->DrawLine({ -size / 100.0f, y, 0.0f },
-			{ size / 100.0f, y, 0.0f },
-			Color::Green);
-
-		textWidth = Editor::GetFont().GetSize(Math::ToString(y / 10.0f), fontSize).x;
-		Editor::GetFont().RenderText(Math::ToString(y / 10.0f), { -size / 25.0f - textWidth / 3.0f, y, 0.0f },
-			Color::Green, fontSize
-		);
-
-		// Negative
-		Renderer3D::Get()->DrawLine({ -size / 100.0f, -y, 0.0f },
-			{ size / 100.0f, -y, 0.0f },
-			Color::Green);
-		textWidth = Editor::GetFont().GetSize(Math::ToString(-y / 10.0f), fontSize).x;
-		Editor::GetFont().RenderText(Math::ToString(-y / 10.0f), { -size / 25.0f - textWidth / 3.0f, -y, 0.0f },
-			Color::Green, fontSize
-		);
-	}
-
-	// Draw graphs here
-
-	//DrawExplicitGraph([](float x) {
-	//	return Math::Sin(x);
-	//});
-
-	//DrawParametricGraph([](float t) {
-	//	return Float2(
-	//		3 * Math::Cos(t),
-	//		5 * Math::Sin(t)
-	//	);
-	//}, m_Interval);
-
-	DrawParametricGraph([](float t) {
-		return Float2(
-			t * Math::Cos(2 * t),
-			t * Math::Sin(t)
-		);
-	}, m_Interval);
+	return isVisible;
 }
 
 bool Graph2D::Valid(float x)
 {
 	return !(std::isnan(x) || std::isinf(x));
+}
+
+ExplicitGraph2D::ExplicitGraph2D(std::string_view name, const std::function<float(float x)>& func)
+	:Graph2D(name), m_Func(func)
+{
+}
+
+void ExplicitGraph2D::Draw(float cameraSize) const
+{
+	if (isVisible)
+	{
+		const float size = cameraSize * 0.8f;
+
+		const float dx = size / (m_Smoothness * 10000.0f);
+		const float xmax = size / 10.0f;
+
+		Float3 last;
+		for (float x = -xmax; x <= xmax - dx; x += dx)
+		{
+			const float f1_x = m_Func(x);
+			const float f2_x = m_Func(x + dx);
+
+
+			if (!Valid(f1_x) || !Valid(f2_x))
+				continue;
+
+			Float3 A = { x * 10.0f, f1_x * 10.0f, 0.0f };
+			Float3 B = { (x + dx) * 10.0f, f2_x * 10.0f, 0.0f};
+			if ((Math::Abs(f1_x) <= xmax)
+				&& (Math::Abs(f2_x) <= xmax))
+			{
+				Renderer3D::Get()->DrawLine(A, B, m_Color);
+			}
+		}
+	}
+}
+
+void ExplicitGraph2D::UI()
+{
+	ImGui::Checkbox("Visible", &isVisible);
+	ImGui::ColorEdit3("Color", m_Color.ToPtr());
+	ImGui::SliderFloat("Smoothness", &m_Smoothness, 0.3f, 1.0f);
+}
+
+ParametricGraph2D::ParametricGraph2D(std::string_view name, const std::function<Float2(float t)>& func, const Tomato::Float2& limits)
+	:Graph2D(name), m_Func(func), m_Limits(limits), m_Interval(limits), m_Speed((limits.y - limits.x) / 100.0f)
+{
+}
+
+void ParametricGraph2D::Draw(float cameraSize) const
+{
+	if (isVisible)
+	{
+		const float size = cameraSize * 0.8f;
+		const float xmax = size / 10.0f;
+
+		const float dt = size / (m_Smoothness * 10000.0f);
+
+		for (float t = m_Interval.x; t <= m_Interval.y - dt; t += dt)
+		{
+			const auto [x1, y1] = m_Func(t).data;
+			const auto [x2, y2] = m_Func(t + dt).data;
+
+			if (!Valid(x1) || !Valid(x2) || !Valid(y1) || !Valid(y2))
+				continue;
+
+			Float3 A = { x1 * 10.0f, y1 * 10.0f, 0.0f };
+			Float3 B = { x2 * 10.0f, y2 * 10.0f, 0.0f };
+			if ((Math::Abs(x1) <= xmax) &&
+				(Math::Abs(x2) <= xmax) &&
+				(Math::Abs(y1) <= xmax) &&
+				(Math::Abs(y2) <= xmax) &&
+				Math::Distance(A, B) < size)
+			{
+				Renderer3D::Get()->DrawLine(A, B, m_Color);
+			}
+		}
+	}
+}
+
+void ParametricGraph2D::UI()
+{
+	ImGui::Checkbox("Visible", &isVisible);
+	ImGui::ColorEdit3("Color", m_Color.ToPtr());
+	ImGui::SliderFloat("Smoothness", &m_Smoothness, 0.3f, 1.0f);
+	ImGui::DragFloatRange2("t", &m_Interval.x, &m_Interval.y, m_Speed, m_Limits.x, m_Limits.y);
 }

@@ -21,13 +21,19 @@
     <ClCompile Include="src\pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graph2D.cpp">
+    <ClCompile Include="src\Graph2DLayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Editor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Graph3DLayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\Graph3D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graph2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,13 +41,19 @@
     <ClInclude Include="src\pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graph2D.h">
+    <ClInclude Include="src\Graph2DLayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Editor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Graph3DLayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="src\Graph3D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graph2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

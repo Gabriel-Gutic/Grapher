@@ -1,7 +1,7 @@
 #include "pch.h"
 
-#include "Graph2D.h"
-#include "Graph3D.h"
+#include "Graph2DLayer.h"
+#include "Graph3DLayer.h"
 #include "Editor.h"
 
 
@@ -12,9 +12,9 @@ public:
 		:App(args)
 	{
 		auto& scene2D = CreateScene("2D Scene");
-		scene2D->PushLayer(new Graph2D());
+		scene2D->PushLayer(new Graph2DLayer());
 		auto& scene3D = CreateScene("3D Scene");
-		scene3D->PushLayer(new Graph3D());
+		scene3D->PushLayer(new Graph3DLayer());
 
 		SetCurrentScene("2D Scene");
 

@@ -91,13 +91,17 @@
   <ItemGroup>
     <ClInclude Include="src\Editor.h" />
     <ClInclude Include="src\Graph2D.h" />
+    <ClInclude Include="src\Graph2DLayer.h" />
     <ClInclude Include="src\Graph3D.h" />
+    <ClInclude Include="src\Graph3DLayer.h" />
     <ClInclude Include="src\pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Editor.cpp" />
     <ClCompile Include="src\Graph2D.cpp" />
+    <ClCompile Include="src\Graph2DLayer.cpp" />
     <ClCompile Include="src\Graph3D.cpp" />
+    <ClCompile Include="src\Graph3DLayer.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
